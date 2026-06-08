@@ -1,40 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, CheckCircle, Award, Users, HardHat, ChevronRight, Truck, Mountain, LayoutGrid, Hammer, Layers, Droplet, Quote } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-
-const heroSlides = [
-    {
-        id: 1,
-        image: "/images/hero/enhanced-hero-1.png",
-        title: "Building With Integrity",
-        subtitle: "Engineering the Future of Infrastructure",
-        tab: "Integrity"
-    },
-    {
-        id: 2,
-        image: "/images/hero/enhanced-hero-2.png",
-        title: "Sustainable Solutions",
-        subtitle: "Advanced Slope Protection Systems",
-        tab: "Sustainability"
-    },
-    {
-        id: 3,
-        image: "/images/hero/enhanced-hero-3.png",
-        title: "Expert Execution",
-        subtitle: "High-Altitude Highway Construction",
-        tab: "Execution"
-    }
-];
+import { supabase } from '../supabaseClient';
 
 const Home = () => {
     const [currentSlide, setCurrentSlide] = useState(0);
+    const [heroSlides, setHeroSlides] = useState([]);
 
     useEffect(() => {
+        const fetchSlides = async () => {
+            const { data, error } = await supabase.from('hero_slides').select('*').order('created_at', { ascending: true });
+            if (!error && data && data.length > 0) {
+                setHeroSlides(data);
+            }
+        };
+        fetchSlides();
+    }, []);
+
+    useEffect(() => {
+        if (heroSlides.length === 0) return;
         const timer = setInterval(() => {
             setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
         }, 5000);
         return () => clearInterval(timer);
-    }, []);
+    }, [heroSlides]);
+
+    if (heroSlides.length === 0) return <div className="h-screen bg-secondary"></div>;
 
     return (
         <div className="font-body text-slate-800">
@@ -99,7 +90,7 @@ const Home = () => {
                                 >
                                     <span className={`block text-xs uppercase tracking-widest mb-2 ${currentSlide === index ? 'text-secondary/70' : 'text-zinc-500 group-hover:text-primary'
                                         }`}>
-                                        0{slide.id}
+                                        0{index + 1}
                                     </span>
                                     <span className={`block text-xl font-heading font-bold uppercase ${currentSlide === index ? 'text-secondary' : 'text-white'
                                         }`}>

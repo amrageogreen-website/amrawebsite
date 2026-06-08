@@ -8,7 +8,14 @@ const AdminDashboard = () => {
     const [enquiries, setEnquiries] = useState([]);
     const [applications, setApplications] = useState([]);
     const [projects, setProjects] = useState([]);
+    const [vacancies, setVacancies] = useState([]);
+    const [teamMembers, setTeamMembers] = useState([]);
+    const [heroSlides, setHeroSlides] = useState([]);
+    
+    // Project Form State
     const [showProjectModal, setShowProjectModal] = useState(false);
+    const [isEditingProject, setIsEditingProject] = useState(false);
+    const [editProjectId, setEditProjectId] = useState(null);
     const [newProject, setNewProject] = useState({
         title: '',
         category: '',
@@ -18,8 +25,26 @@ const AdminDashboard = () => {
         client: '',
         budget: '',
         duration: '',
-        description: ''
+        description: '',
+        image_url: ''
     });
+    
+    const [showVacancyModal, setShowVacancyModal] = useState(false);
+    const [showTeamModal, setShowTeamModal] = useState(false);
+    const [showHeroModal, setShowHeroModal] = useState(false);
+    
+    const [isEditingVacancy, setIsEditingVacancy] = useState(false);
+    const [editVacancyId, setEditVacancyId] = useState(null);
+    const [newVacancy, setNewVacancy] = useState({ title: '', exp: '', loc: '', desc: '' });
+
+    const [isEditingTeam, setIsEditingTeam] = useState(false);
+    const [editTeamId, setEditTeamId] = useState(null);
+    const [newTeam, setNewTeam] = useState({ name: '', position: '', image: '', bio: '', email: '', phone: '' });
+
+    const [isEditingHero, setIsEditingHero] = useState(false);
+    const [editHeroId, setEditHeroId] = useState(null);
+    const [newHero, setNewHero] = useState({ title: '', subtitle: '', tab: '', image: '' });
+
     const navigate = useNavigate();
 
     const handleLogout = () => {
@@ -43,6 +68,18 @@ const AdminDashboard = () => {
                     const { data, error } = await supabase.from('projects').select('*').order('created_at', { ascending: false });
                     if (error) throw error;
                     if (data) setProjects(data);
+                } else if (activeTab === 'vacancies') {
+                    const { data, error } = await supabase.from('job_vacancies').select('*').order('created_at', { ascending: false });
+                    if (error) throw error;
+                    if (data) setVacancies(data);
+                } else if (activeTab === 'team') {
+                    const { data, error } = await supabase.from('team_members').select('*').order('created_at', { ascending: false });
+                    if (error) throw error;
+                    if (data) setTeamMembers(data);
+                } else if (activeTab === 'hero') {
+                    const { data, error } = await supabase.from('hero_slides').select('*').order('created_at', { ascending: false });
+                    if (error) throw error;
+                    if (data) setHeroSlides(data);
                 }
             } catch (error) {
                 console.error("Failed to fetch data", error);
@@ -54,44 +91,73 @@ const AdminDashboard = () => {
     const handleAddProject = async (e) => {
         e.preventDefault();
         
-        // Generate a slug from the title
         const slug = newProject.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
         
         try {
-            const projectToInsert = {
-                ...newProject,
-                slug,
-                year: parseInt(newProject.year) || new Date().getFullYear(),
-                challenges: [],
-                solutions: [],
-                highlights: [],
-                technical_specs: {}
-            };
+            if (isEditingProject && editProjectId) {
+                // Update
+                const { error } = await supabase.from('projects').update({
+                    ...newProject,
+                    slug,
+                    year: parseInt(newProject.year) || new Date().getFullYear()
+                }).eq('id', editProjectId);
+                
+                if (error) throw error;
+                alert('Project updated successfully!');
+            } else {
+                // Insert
+                const projectToInsert = {
+                    ...newProject,
+                    slug,
+                    year: parseInt(newProject.year) || new Date().getFullYear(),
+                    challenges: [],
+                    solutions: [],
+                    highlights: [],
+                    technical_specs: {}
+                };
 
-            const { error } = await supabase.from('projects').insert([projectToInsert]);
-            if (error) throw error;
+                const { error } = await supabase.from('projects').insert([projectToInsert]);
+                if (error) throw error;
+                alert('Project added successfully!');
+            }
             
-            alert('Project added successfully!');
             setShowProjectModal(false);
-            setNewProject({
-                title: '',
-                category: '',
-                location: '',
-                year: '',
-                status: 'ongoing',
-                client: '',
-                budget: '',
-                duration: '',
-                description: '',
-                image_url: ''
-            });
+            resetProjectForm();
             // Trigger refresh
             setActiveTab('');
             setTimeout(() => setActiveTab('projects'), 0);
         } catch (error) {
-            console.error('Failed to add project', error);
-            alert('Failed to add project. Error: ' + error.message);
+            console.error('Failed to save project', error);
+            alert('Failed to save project. Error: ' + error.message);
         }
+    };
+
+    const resetProjectForm = () => {
+        setNewProject({
+            title: '', category: '', location: '', year: '',
+            status: 'ongoing', client: '', budget: '', duration: '',
+            description: '', image_url: ''
+        });
+        setIsEditingProject(false);
+        setEditProjectId(null);
+    };
+
+    const openEditProjectModal = (project) => {
+        setNewProject({
+            title: project.title,
+            category: project.category,
+            location: project.location,
+            year: project.year,
+            status: project.status,
+            client: project.client,
+            budget: project.budget,
+            duration: project.duration,
+            description: project.description,
+            image_url: project.image_url
+        });
+        setIsEditingProject(true);
+        setEditProjectId(project.id);
+        setShowProjectModal(true);
     };
 
     const handleDeleteProject = async (id) => {
@@ -149,6 +215,24 @@ const AdminDashboard = () => {
                     >
                         <FileText size={18} /> Projects
                     </button>
+                    <button
+                        className={`w-full flex items-center gap-3 px-6 py-3 text-sm font-medium transition-all border-r-4 ${activeTab === 'vacancies' ? 'bg-slate-800 text-white border-primary' : 'text-slate-400 border-transparent hover:bg-slate-800 hover:text-white'}`}
+                        onClick={() => setActiveTab('vacancies')}
+                    >
+                        <Briefcase size={18} /> Job Vacancies
+                    </button>
+                    <button
+                        className={`w-full flex items-center gap-3 px-6 py-3 text-sm font-medium transition-all border-r-4 ${activeTab === 'team' ? 'bg-slate-800 text-white border-primary' : 'text-slate-400 border-transparent hover:bg-slate-800 hover:text-white'}`}
+                        onClick={() => setActiveTab('team')}
+                    >
+                        <Users size={18} /> Team Members
+                    </button>
+                    <button
+                        className={`w-full flex items-center gap-3 px-6 py-3 text-sm font-medium transition-all border-r-4 ${activeTab === 'hero' ? 'bg-slate-800 text-white border-primary' : 'text-slate-400 border-transparent hover:bg-slate-800 hover:text-white'}`}
+                        onClick={() => setActiveTab('hero')}
+                    >
+                        <LayoutDashboard size={18} /> Hero Slides
+                    </button>
                 </nav>
 
                 <div className="p-6 border-t border-slate-800">
@@ -167,6 +251,9 @@ const AdminDashboard = () => {
                             {activeTab === 'enquiries' && 'Enquiry Management'}
                             {activeTab === 'applications' && 'Talent Acquisition'}
                             {activeTab === 'projects' && 'Project Portfolio'}
+                            {activeTab === 'vacancies' && 'Job Vacancies'}
+                            {activeTab === 'team' && 'Team Management'}
+                            {activeTab === 'hero' && 'Hero Slides Settings'}
                         </h2>
                         <p className="text-slate-500 text-sm mt-1">Manage your website content and user interactions.</p>
                     </div>
@@ -349,7 +436,10 @@ const AdminDashboard = () => {
                                                 <td className="p-4 text-slate-600">{item.category}</td>
                                                 <td className="p-4 text-slate-600">{item.location}</td>
                                                 <td className="p-4 text-slate-500 text-sm">{item.year}</td>
-                                                <td className="p-4 text-red-500 cursor-pointer hover:underline" onClick={() => handleDeleteProject(item.id)}>Delete</td>
+                                                <td className="p-4 flex gap-3">
+                                                    <span className="text-blue-500 cursor-pointer hover:underline font-semibold" onClick={() => openEditProjectModal(item)}>Edit</span>
+                                                    <span className="text-red-500 cursor-pointer hover:underline font-semibold" onClick={() => handleDeleteProject(item.id)}>Delete</span>
+                                                </td>
                                             </tr>
                                         )) : (
                                             <tr><td colSpan="5" className="p-8 text-center text-slate-400">No projects listed.</td></tr>
@@ -367,8 +457,10 @@ const AdminDashboard = () => {
                 <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
                     <div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
                         <div className="p-6 border-b border-slate-200 flex justify-between items-center sticky top-0 bg-white">
-                            <h3 className="text-2xl font-heading font-bold text-secondary uppercase">Add New Project</h3>
-                            <button onClick={() => setShowProjectModal(false)} className="text-slate-400 hover:text-slate-600">
+                            <h3 className="text-2xl font-heading font-bold text-secondary uppercase">
+                                {isEditingProject ? "Edit Project" : "Add New Project"}
+                            </h3>
+                            <button onClick={() => { setShowProjectModal(false); resetProjectForm(); }} className="text-slate-400 hover:text-slate-600">
                                 <X size={24} />
                             </button>
                         </div>
@@ -506,7 +598,7 @@ const AdminDashboard = () => {
                             <div className="flex gap-4 pt-4">
                                 <button
                                     type="button"
-                                    onClick={() => setShowProjectModal(false)}
+                                    onClick={() => { setShowProjectModal(false); resetProjectForm(); }}
                                     className="flex-1 px-6 py-3 border-2 border-slate-300 text-slate-700 rounded-sm font-heading font-bold uppercase hover:bg-slate-50 transition-all"
                                 >
                                     Cancel
@@ -515,7 +607,7 @@ const AdminDashboard = () => {
                                     type="submit"
                                     className="flex-1 px-6 py-3 bg-primary text-white rounded-sm font-heading font-bold uppercase hover:bg-primary-dark transition-all"
                                 >
-                                    Add Project
+                                    {isEditingProject ? "Save Changes" : "Add Project"}
                                 </button>
                             </div>
                         </form>

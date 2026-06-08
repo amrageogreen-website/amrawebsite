@@ -1,10 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Upload, Briefcase } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 
 const Careers = () => {
     const [file, setFile] = useState(null);
+    const [jobVacancies, setJobVacancies] = useState([]);
+
+    useEffect(() => {
+        const fetchVacancies = async () => {
+            const { data, error } = await supabase.from('job_vacancies').select('*').order('created_at', { ascending: false });
+            if (!error && data) {
+                setJobVacancies(data);
+            }
+        };
+        fetchVacancies();
+    }, []);
 
     const handleFileChange = (e) => {
         if (e.target.files) {
@@ -81,11 +92,7 @@ const Careers = () => {
                             <div>
                                 <h2 className="text-3xl font-bold text-slate-800 mb-6">Current Openings</h2>
                                 <div className="space-y-4">
-                                    {[
-                                        { title: 'Senior Civil Engineer', exp: '5+ Years', loc: 'Himachal Pradesh', desc: 'Expertise in hillside road construction and retaining wall design required.' },
-                                        { title: 'Site Supervisor', exp: '2+ Years', loc: 'Uttarakhand', desc: 'Site execution, labor management, and quality control.' },
-                                        { title: 'Project Manager', exp: '10+ Years', loc: 'New Delhi (HQ)', desc: 'Handling end-to-end execution of government tender projects.' }
-                                    ].map((job, idx) => (
+                                    {jobVacancies.map((job, idx) => (
                                         <div key={idx} className="p-6 border border-slate-200 rounded-lg hover:border-primary transition-colors bg-slate-50">
                                             <div className="flex justify-between items-start mb-2">
                                                 <h3 className="text-xl font-bold text-slate-900">{job.title}</h3>

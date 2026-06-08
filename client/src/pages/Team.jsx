@@ -1,58 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Linkedin, Mail, Phone } from 'lucide-react';
+import { supabase } from '../supabaseClient';
 
 const Team = () => {
-    const teamMembers = [
-        {
-            name: "Mr. [Director Name]",
-            position: "Managing Director",
-            image: "/images/about/team.png",
-            bio: "Over 20 years of experience in infrastructure development and geotechnical engineering.",
-            email: "director@amrageogreen.com",
-            phone: "+91 987 654 3210"
-        },
-        {
-            name: "Eng. [Name]",
-            position: "Chief Engineer - Highway Construction",
-            image: "/images/about/team.png",
-            bio: "Specialist in highway construction with expertise in asphalt paving and road design.",
-            email: "engineer@amrageogreen.com",
-            phone: "+91 987 654 3211"
-        },
-        {
-            name: "Eng. [Name]",
-            position: "Head - Slope Protection",
-            image: "/images/about/team.png",
-            bio: "Expert in geotechnical solutions, slope stabilization, and soil nailing techniques.",
-            email: "slope@amrageogreen.com",
-            phone: "+91 987 654 3212"
-        },
-        {
-            name: "[Name]",
-            position: "Project Manager",
-            image: "/images/about/team.png",
-            bio: "Experienced in managing large-scale infrastructure projects across India.",
-            email: "pm@amrageogreen.com",
-            phone: "+91 987 654 3213"
-        },
-        {
-            name: "[Name]",
-            position: "Safety Officer",
-            image: "/images/about/team.png",
-            bio: "Ensuring international safety standards across all AMRA Geogreen projects.",
-            email: "safety@amrageogreen.com",
-            phone: "+91 987 654 3214"
-        },
-        {
-            name: "[Name]",
-            position: "Quality Assurance Head",
-            image: "/images/about/team.png",
-            bio: "Maintaining quality benchmarks and ensuring compliance with industry standards.",
-            email: "qa@amrageogreen.com",
-            phone: "+91 987 654 3215"
-        }
-    ];
+    const [teamMembers, setTeamMembers] = useState([]);
+
+    useEffect(() => {
+        const fetchTeam = async () => {
+            const { data, error } = await supabase.from('team_members').select('*').order('created_at', { ascending: true });
+            if (!error && data) {
+                setTeamMembers(data);
+            }
+        };
+        fetchTeam();
+    }, []);
 
     return (
         <div className="pt-20">
