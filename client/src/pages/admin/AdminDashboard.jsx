@@ -132,6 +132,26 @@ const AdminDashboard = () => {
         }
     };
 
+    
+    const handleImageUpload = async (e, setter, fieldName) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
+        
+        try {
+            const { error: uploadError } = await supabase.storage.from('project-images').upload(fileName, file);
+            if (uploadError) throw uploadError;
+
+            const { data } = supabase.storage.from('project-images').getPublicUrl(fileName);
+            setter(prev => ({ ...prev, [fieldName]: data.publicUrl }));
+        } catch (error) {
+            console.error('Error uploading image:', error.message);
+            alert('Error uploading image! Make sure file size is under limits.');
+        }
+    };
+
     const resetProjectForm = () => {
         setNewProject({
             title: '', category: '', location: '', year: '',
@@ -810,7 +830,16 @@ const AdminDashboard = () => {
                             <input type="text" required placeholder="Position" value={newTeam.position} onChange={e => setNewTeam({...newTeam, position: e.target.value})} className="w-full p-2 border" />
                             <input type="text" required placeholder="Email" value={newTeam.email} onChange={e => setNewTeam({...newTeam, email: e.target.value})} className="w-full p-2 border" />
                             <input type="text" required placeholder="Phone" value={newTeam.phone} onChange={e => setNewTeam({...newTeam, phone: e.target.value})} className="w-full p-2 border" />
-                            <input type="text" required placeholder="Image URL" value={newTeam.image} onChange={e => setNewTeam({...newTeam, image: e.target.value})} className="w-full p-2 border" />
+                            
+                            <div className="border border-slate-200 p-3 rounded-md bg-slate-50">
+                                <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Profile Image</label>
+                                <div className="flex items-center gap-3 mb-2">
+                                    {newTeam.image && <img src={newTeam.image} alt="Preview" className="h-12 w-12 object-cover rounded-full border border-slate-300" />}
+                                    <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, setNewTeam, 'image')} className="text-sm" />
+                                </div>
+                                <input type="text" required placeholder="Or Paste Image URL" value={newTeam.image} onChange={e => setNewTeam({...newTeam, image: e.target.value})} className="w-full p-2 border text-sm" />
+                            </div>
+
                             <textarea required placeholder="Bio" value={newTeam.bio} onChange={e => setNewTeam({...newTeam, bio: e.target.value})} className="w-full p-2 border" rows="3"></textarea>
                             <button type="submit" className="w-full bg-primary text-white p-3 font-bold uppercase">Save</button>
                         </form>
@@ -830,7 +859,16 @@ const AdminDashboard = () => {
                             <input type="text" required placeholder="Title" value={newHero.title} onChange={e => setNewHero({...newHero, title: e.target.value})} className="w-full p-2 border" />
                             <input type="text" required placeholder="Subtitle" value={newHero.subtitle} onChange={e => setNewHero({...newHero, subtitle: e.target.value})} className="w-full p-2 border" />
                             <input type="text" required placeholder="Tab Name (e.g. Integrity)" value={newHero.tab} onChange={e => setNewHero({...newHero, tab: e.target.value})} className="w-full p-2 border" />
-                            <input type="text" required placeholder="Image URL" value={newHero.image} onChange={e => setNewHero({...newHero, image: e.target.value})} className="w-full p-2 border" />
+                            
+                            <div className="border border-slate-200 p-3 rounded-md bg-slate-50">
+                                <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Background Image</label>
+                                <div className="flex items-center gap-3 mb-2">
+                                    {newHero.image && <img src={newHero.image} alt="Preview" className="h-16 w-24 object-cover rounded-md border border-slate-300" />}
+                                    <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, setNewHero, 'image')} className="text-sm" />
+                                </div>
+                                <input type="text" required placeholder="Or Paste Image URL" value={newHero.image} onChange={e => setNewHero({...newHero, image: e.target.value})} className="w-full p-2 border text-sm" />
+                            </div>
+
                             <button type="submit" className="w-full bg-primary text-white p-3 font-bold uppercase">Save</button>
                         </form>
                     </div>
