@@ -1,0 +1,77 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body {
+    @apply text-slate-800 bg-white antialiased;
+    font-family: 'Poppins', sans-serif;
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-bold text-primary-dark leading-tight;
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  ::selection {
+    @apply bg-primary text-secondary;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center gap-2 px-6 py-3 font-semibold rounded transition-all duration-200 text-base;
+  }
+
+  .btn-primary {
+    @apply bg-primary text-secondary hover:bg-white hover:text-secondary hover:shadow-lg hover:-translate-y-1;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary text-white border border-secondary hover:bg-primary hover:text-secondary hover:border-primary hover:-translate-y-1;
+  }
+
+  .container {
+    @apply max-w-[1280px] mx-auto px-4;
+  }
+
+  .section {
+    @apply py-20;
+    /* ~5rem */
+  }
+
+  .section-title {
+    @apply text-4xl mb-4 text-center font-extrabold text-primary-dark;
+  }
+
+  .section-subtitle {
+    @apply text-center text-lg text-slate-500 max-w-2xl mx-auto mb-16;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #64748B;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
