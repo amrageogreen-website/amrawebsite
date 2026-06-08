@@ -1,29 +1,81 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, MapPin, Calendar, DollarSign, Users, CheckCircle, AlertTriangle, Lightbulb, X } from 'lucide-react';
-import projectsData from '../data/projectsData';
+import { ArrowLeft, MapPin, Calendar, DollarSign, Users, CheckCircle, AlertTriangle, Lightbulb, X, Loader } from 'lucide-react';
+import { supabase } from '../supabaseClient';
 
 const ProjectDetail = () => {
     const { slug } = useParams();
-    const project = projectsData.find(p => p.slug === slug);
+    const [project, setProject] = useState(null);
+    const [relatedProjects, setRelatedProjects] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [lightboxImage, setLightboxImage] = useState(null);
+    const [notFound, setNotFound] = useState(false);
 
-    if (!project) {
+    useEffect(() => {
+        const fetchProject = async () => {
+            setLoading(true);
+            try {
+                // Fetch the current project
+                const { data: projectData, error: projectError } = await supabase
+                    .from('projects')
+                    .select('*')
+                    .eq('slug', slug)
+                    .single();
+
+                if (projectError || !projectData) {
+                    setNotFound(true);
+                    return;
+                }
+                
+                setProject(projectData);
+
+                // Fetch related projects
+                const { data: relatedData, error: relatedError } = await supabase
+                    .from('projects')
+                    .select('*')
+                    .eq('category', projectData.category)
+                    .neq('id', projectData.id)
+                    .limit(3);
+
+                if (!relatedError && relatedData) {
+                    setRelatedProjects(relatedData);
+                }
+            } catch (err) {
+                console.error("Failed to fetch project detail", err);
+                setNotFound(true);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProject();
+    }, [slug]);
+
+    if (loading) {
+        return (
+            <div className="pt-32 pb-20 flex justify-center items-center min-h-[60vh]">
+                <Loader className="animate-spin text-primary" size={48} />
+            </div>
+        );
+    }
+
+    if (notFound || !project) {
         return <Navigate to="/projects" replace />;
     }
 
-    // Get related projects (same category, exclude current)
-    const relatedProjects = projectsData
-        .filter(p => p.category === project.category && p.id !== project.id)
-        .slice(0, 3);
+    const images = project.images || [project.image_url];
+    const challenges = project.challenges || [];
+    const solutions = project.solutions || [];
+    const highlights = project.highlights || [];
+    const technicalSpecs = project.technical_specs || {};
 
     return (
         <div className="pt-20">
             {/* Hero Section */}
             <section className="relative h-[60vh] min-h-[500px] overflow-hidden">
                 <img
-                    src={project.image}
+                    src={project.image_url}
                     alt={project.title}
                     className="absolute inset-0 w-full h-full object-cover"
                 />
@@ -54,7 +106,7 @@ const ProjectDetail = () => {
                         <h1 className="text-4xl md:text-5xl font-heading font-bold text-white mb-4 leading-tight">{project.title}</h1>
                         <div className="flex flex-wrap gap-6 text-slate-200">
                             <span className="flex items-center gap-2"><MapPin size={18} /> {project.location}</span>
-                            <span className="flex items-center gap-2"><Calendar size={18} /> {project.completionDate}</span>
+                            <span className="flex items-center gap-2"><Calendar size={18} /> {project.completion_date || project.year}</span>
                         </div>
                     </motion.div>
                 </div>
@@ -77,7 +129,7 @@ const ProjectDetail = () => {
                         <div className="bg-white p-6 rounded-lg shadow-sm border-l-4 border-primary">
                             <Users className="text-primary mb-2" size={24} />
                             <p className="text-sm text-slate-500 uppercase tracking-wider mb-1">Team Size</p>
-                            <p className="text-2xl font-heading font-bold text-secondary">{project.teamSize}</p>
+                            <p className="text-2xl font-heading font-bold text-secondary">{project.team_size}</p>
                         </div>
                         <div className="bg-white p-6 rounded-lg shadow-sm border-l-4 border-primary">
                             <MapPin className="text-primary mb-2" size={24} />
@@ -104,7 +156,7 @@ const ProjectDetail = () => {
                                 <h2 className="text-2xl font-heading font-bold text-secondary uppercase">Challenges Faced</h2>
                             </div>
                             <ul className="space-y-3">
-                                {project.challenges.map((challenge, idx) => (
+                                {challenges.map((challenge, idx) => (
                                     <li key={idx} className="flex gap-3 items-start">
                                         <span className="text-red-500 mt-1">●</span>
                                         <span className="text-slate-700">{challenge}</span>
@@ -120,7 +172,7 @@ const ProjectDetail = () => {
                                 <h2 className="text-2xl font-heading font-bold text-secondary uppercase">Solutions Implemented</h2>
                             </div>
                             <ul className="space-y-3">
-                                {project.solutions.map((solution, idx) => (
+                                {solutions.map((solution, idx) => (
                                     <li key={idx} className="flex gap-3 items-start">
                                         <CheckCircle className="text-primary mt-1 shrink-0" size={18} />
                                         <span className="text-slate-700">{solution}</span>
@@ -137,7 +189,7 @@ const ProjectDetail = () => {
                 <div className="container">
                     <h2 className="text-3xl font-heading font-bold text-secondary mb-8 uppercase text-center">Project Gallery</h2>
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {project.images.map((img, idx) => (
+                        {images.map((img, idx) => (
                             <motion.div
                                 key={idx}
                                 className="relative h-64 rounded-lg overflow-hidden cursor-pointer group"
@@ -159,7 +211,7 @@ const ProjectDetail = () => {
                 <div className="container">
                     <h2 className="text-3xl font-heading font-bold text-secondary mb-8 uppercase text-center">Key Highlights</h2>
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {project.highlights.map((highlight, idx) => (
+                        {highlights.map((highlight, idx) => (
                             <div key={idx} className="bg-slate-50 p-6 rounded-lg border-l-4 border-primary">
                                 <CheckCircle className="text-primary mb-3" size={24} />
                                 <p className="text-slate-700 font-medium">{highlight}</p>
@@ -174,7 +226,7 @@ const ProjectDetail = () => {
                 <div className="container">
                     <h2 className="text-3xl font-heading font-bold mb-8 uppercase text-center">Technical Specifications</h2>
                     <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-                        {Object.entries(project.technicalSpecs).map(([key, value]) => (
+                        {Object.entries(technicalSpecs).map(([key, value]) => (
                             <div key={key} className="bg-white/10 backdrop-blur p-6 rounded-lg">
                                 <p className="text-primary text-sm uppercase tracking-wider mb-2 font-bold">
                                     {key.replace(/([A-Z])/g, ' $1').trim()}
@@ -199,7 +251,7 @@ const ProjectDetail = () => {
                                     className="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300"
                                 >
                                     <div className="h-48 overflow-hidden">
-                                        <img src={proj.image} alt={proj.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                        <img src={proj.image_url} alt={proj.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                                     </div>
                                     <div className="p-6">
                                         <span className="text-primary text-xs font-bold uppercase">{proj.category}</span>

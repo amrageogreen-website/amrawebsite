@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, Calendar, ArrowUpRight } from 'lucide-react';
 import { supabase } from '../supabaseClient';
-import projectsData from '../data/projectsData';
 
 const Projects = () => {
     const [projects, setProjects] = useState([]);
@@ -27,8 +26,7 @@ const Projects = () => {
     }, []);
 
     // Filter by category and status
-    // Combine the imported static projectsData with the db projects
-    let filteredProjects = [...projectsData, ...projects];
+    let filteredProjects = [...projects];
 
     if (filter !== 'All') {
         filteredProjects = filteredProjects.filter(p => p.category === filter);
@@ -39,7 +37,7 @@ const Projects = () => {
     }
 
     // Dynamically calculate categories
-    const categories = ['All', ...new Set([...projectsData, ...projects].map(p => p.category))];
+    const categories = ['All', ...new Set(projects.map(p => p.category))];
 
     return (
         <div className="pt-20">

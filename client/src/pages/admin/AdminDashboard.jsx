@@ -53,8 +53,22 @@ const AdminDashboard = () => {
 
     const handleAddProject = async (e) => {
         e.preventDefault();
+        
+        // Generate a slug from the title
+        const slug = newProject.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+        
         try {
-            const { error } = await supabase.from('projects').insert([newProject]);
+            const projectToInsert = {
+                ...newProject,
+                slug,
+                year: parseInt(newProject.year) || new Date().getFullYear(),
+                challenges: [],
+                solutions: [],
+                highlights: [],
+                technical_specs: {}
+            };
+
+            const { error } = await supabase.from('projects').insert([projectToInsert]);
             if (error) throw error;
             
             alert('Project added successfully!');
@@ -68,14 +82,28 @@ const AdminDashboard = () => {
                 client: '',
                 budget: '',
                 duration: '',
-                description: ''
+                description: '',
+                image_url: ''
             });
             // Trigger refresh
             setActiveTab('');
             setTimeout(() => setActiveTab('projects'), 0);
         } catch (error) {
             console.error('Failed to add project', error);
-            alert('Failed to add project');
+            alert('Failed to add project. Error: ' + error.message);
+        }
+    };
+
+    const handleDeleteProject = async (id) => {
+        if (!window.confirm("Are you sure you want to delete this project?")) return;
+        try {
+            const { error } = await supabase.from('projects').delete().eq('id', id);
+            if (error) throw error;
+            alert("Project deleted successfully");
+            setProjects(projects.filter(p => p.id !== id));
+        } catch (error) {
+            console.error('Failed to delete project', error);
+            alert('Failed to delete project');
         }
     };
 
@@ -278,7 +306,11 @@ const AdminDashboard = () => {
                                             <td className="p-4 font-medium text-slate-900">{item.name}</td>
                                             <td className="p-4 text-slate-600">{item.email}</td>
                                             <td className="p-4 text-slate-600">{item.position}</td>
-                                            <td className="p-4 text-primary underline cursor-pointer">{item.resume_url || 'N/A'}</td>
+                                            <td className="p-4 text-primary underline cursor-pointer">
+                                                {item.resume_url ? (
+                                                    <a href={item.resume_url} target="_blank" rel="noopener noreferrer">View CV</a>
+                                                ) : 'N/A'}
+                                            </td>
                                             <td className="p-4 text-slate-500 text-sm">{item.created_at ? new Date(item.created_at).toLocaleDateString() : 'N/A'}</td>
                                         </tr>
                                     )) : (
@@ -317,7 +349,7 @@ const AdminDashboard = () => {
                                                 <td className="p-4 text-slate-600">{item.category}</td>
                                                 <td className="p-4 text-slate-600">{item.location}</td>
                                                 <td className="p-4 text-slate-500 text-sm">{item.year}</td>
-                                                <td className="p-4 text-red-500 cursor-pointer hover:underline">Delete</td>
+                                                <td className="p-4 text-red-500 cursor-pointer hover:underline" onClick={() => handleDeleteProject(item.id)}>Delete</td>
                                             </tr>
                                         )) : (
                                             <tr><td colSpan="5" className="p-8 text-center text-slate-400">No projects listed.</td></tr>
@@ -457,6 +489,18 @@ const AdminDashboard = () => {
                                     className="w-full px-4 py-2 border-2 border-slate-200 rounded-sm focus:border-primary focus:outline-none"
                                     placeholder="Detailed project description..."
                                 ></textarea>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-heading font-semibold text-slate-700 mb-2 uppercase">Image URL</label>
+                                <input
+                                    type="text"
+                                    required
+                                    value={newProject.image_url || ''}
+                                    onChange={(e) => setNewProject({ ...newProject, image_url: e.target.value })}
+                                    className="w-full px-4 py-2 border-2 border-slate-200 rounded-sm focus:border-primary focus:outline-none"
+                                    placeholder="https://example.com/image.jpg"
+                                />
                             </div>
 
                             <div className="flex gap-4 pt-4">
