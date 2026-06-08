@@ -173,6 +173,69 @@ const AdminDashboard = () => {
         }
     };
 
+    // Vacancy Handlers
+    const resetVacancyForm = () => { setNewVacancy({ title: '', exp: '', loc: '', desc: '' }); setIsEditingVacancy(false); setEditVacancyId(null); };
+    const openEditVacancyModal = (v) => { setNewVacancy({ title: v.title, exp: v.exp, loc: v.loc, desc: v.desc }); setIsEditingVacancy(true); setEditVacancyId(v.id); setShowVacancyModal(true); };
+    const handleSaveVacancy = async (e) => {
+        e.preventDefault();
+        try {
+            if (isEditingVacancy) {
+                await supabase.from('job_vacancies').update(newVacancy).eq('id', editVacancyId);
+            } else {
+                await supabase.from('job_vacancies').insert([newVacancy]);
+            }
+            setShowVacancyModal(false); resetVacancyForm();
+            setActiveTab(''); setTimeout(() => setActiveTab('vacancies'), 0);
+        } catch(e) { alert(e.message); }
+    };
+    const handleDeleteVacancy = async (id) => {
+        if (!window.confirm("Delete?")) return;
+        await supabase.from('job_vacancies').delete().eq('id', id);
+        setVacancies(vacancies.filter(v => v.id !== id));
+    };
+
+    // Team Handlers
+    const resetTeamForm = () => { setNewTeam({ name: '', position: '', image: '', bio: '', email: '', phone: '' }); setIsEditingTeam(false); setEditTeamId(null); };
+    const openEditTeamModal = (t) => { setNewTeam({ name: t.name, position: t.position, image: t.image, bio: t.bio, email: t.email, phone: t.phone }); setIsEditingTeam(true); setEditTeamId(t.id); setShowTeamModal(true); };
+    const handleSaveTeam = async (e) => {
+        e.preventDefault();
+        try {
+            if (isEditingTeam) {
+                await supabase.from('team_members').update(newTeam).eq('id', editTeamId);
+            } else {
+                await supabase.from('team_members').insert([newTeam]);
+            }
+            setShowTeamModal(false); resetTeamForm();
+            setActiveTab(''); setTimeout(() => setActiveTab('team'), 0);
+        } catch(e) { alert(e.message); }
+    };
+    const handleDeleteTeam = async (id) => {
+        if (!window.confirm("Delete?")) return;
+        await supabase.from('team_members').delete().eq('id', id);
+        setTeamMembers(teamMembers.filter(t => t.id !== id));
+    };
+
+    // Hero Handlers
+    const resetHeroForm = () => { setNewHero({ title: '', subtitle: '', tab: '', image: '' }); setIsEditingHero(false); setEditHeroId(null); };
+    const openEditHeroModal = (h) => { setNewHero({ title: h.title, subtitle: h.subtitle, tab: h.tab, image: h.image }); setIsEditingHero(true); setEditHeroId(h.id); setShowHeroModal(true); };
+    const handleSaveHero = async (e) => {
+        e.preventDefault();
+        try {
+            if (isEditingHero) {
+                await supabase.from('hero_slides').update(newHero).eq('id', editHeroId);
+            } else {
+                await supabase.from('hero_slides').insert([newHero]);
+            }
+            setShowHeroModal(false); resetHeroForm();
+            setActiveTab(''); setTimeout(() => setActiveTab('hero'), 0);
+        } catch(e) { alert(e.message); }
+    };
+    const handleDeleteHero = async (id) => {
+        if (!window.confirm("Delete?")) return;
+        await supabase.from('hero_slides').delete().eq('id', id);
+        setHeroSlides(heroSlides.filter(h => h.id !== id));
+    };
+
     // Stats
     const stats = {
         totalEnquiries: enquiries.length,
