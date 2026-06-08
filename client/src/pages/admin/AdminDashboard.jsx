@@ -449,6 +449,106 @@ const AdminDashboard = () => {
                             </div>
                         </div>
                     )}
+                    
+                    {activeTab === 'vacancies' && (
+                        <div className="p-6">
+                            <div className="flex justify-end mb-6">
+                                <button onClick={() => setShowVacancyModal(true)} className="btn bg-primary hover:bg-primary-dark text-white font-heading font-bold uppercase tracking-wider px-6 py-3 rounded-sm flex items-center gap-2">
+                                    <Plus size={18} /> Add Vacancy
+                                </button>
+                            </div>
+                            <table className="w-full text-left border-collapse">
+                                <thead>
+                                    <tr className="bg-slate-50 border-b border-slate-200">
+                                        <th className="p-4 font-semibold text-slate-600 text-sm">Title</th>
+                                        <th className="p-4 font-semibold text-slate-600 text-sm">Experience</th>
+                                        <th className="p-4 font-semibold text-slate-600 text-sm">Location</th>
+                                        <th className="p-4 font-semibold text-slate-600 text-sm">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {vacancies.map(v => (
+                                        <tr key={v.id} className="border-b border-slate-100 hover:bg-slate-50">
+                                            <td className="p-4">{v.title}</td>
+                                            <td className="p-4">{v.exp}</td>
+                                            <td className="p-4">{v.loc}</td>
+                                            <td className="p-4 flex gap-3">
+                                                <span className="text-blue-500 cursor-pointer font-bold" onClick={() => openEditVacancyModal(v)}>Edit</span>
+                                                <span className="text-red-500 cursor-pointer font-bold" onClick={() => handleDeleteVacancy(v.id)}>Delete</span>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
+
+                    {activeTab === 'team' && (
+                        <div className="p-6">
+                            <div className="flex justify-end mb-6">
+                                <button onClick={() => setShowTeamModal(true)} className="btn bg-primary hover:bg-primary-dark text-white font-heading font-bold uppercase tracking-wider px-6 py-3 rounded-sm flex items-center gap-2">
+                                    <Plus size={18} /> Add Member
+                                </button>
+                            </div>
+                            <table className="w-full text-left border-collapse">
+                                <thead>
+                                    <tr className="bg-slate-50 border-b border-slate-200">
+                                        <th className="p-4 font-semibold text-slate-600 text-sm">Name</th>
+                                        <th className="p-4 font-semibold text-slate-600 text-sm">Position</th>
+                                        <th className="p-4 font-semibold text-slate-600 text-sm">Email</th>
+                                        <th className="p-4 font-semibold text-slate-600 text-sm">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {teamMembers.map(t => (
+                                        <tr key={t.id} className="border-b border-slate-100 hover:bg-slate-50">
+                                            <td className="p-4">{t.name}</td>
+                                            <td className="p-4">{t.position}</td>
+                                            <td className="p-4">{t.email}</td>
+                                            <td className="p-4 flex gap-3">
+                                                <span className="text-blue-500 cursor-pointer font-bold" onClick={() => openEditTeamModal(t)}>Edit</span>
+                                                <span className="text-red-500 cursor-pointer font-bold" onClick={() => handleDeleteTeam(t.id)}>Delete</span>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
+
+                    {activeTab === 'hero' && (
+                        <div className="p-6">
+                            <div className="flex justify-end mb-6">
+                                <button onClick={() => setShowHeroModal(true)} className="btn bg-primary hover:bg-primary-dark text-white font-heading font-bold uppercase tracking-wider px-6 py-3 rounded-sm flex items-center gap-2">
+                                    <Plus size={18} /> Add Slide
+                                </button>
+                            </div>
+                            <table className="w-full text-left border-collapse">
+                                <thead>
+                                    <tr className="bg-slate-50 border-b border-slate-200">
+                                        <th className="p-4 font-semibold text-slate-600 text-sm">Title</th>
+                                        <th className="p-4 font-semibold text-slate-600 text-sm">Subtitle</th>
+                                        <th className="p-4 font-semibold text-slate-600 text-sm">Tab Name</th>
+                                        <th className="p-4 font-semibold text-slate-600 text-sm">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {heroSlides.map(h => (
+                                        <tr key={h.id} className="border-b border-slate-100 hover:bg-slate-50">
+                                            <td className="p-4">{h.title}</td>
+                                            <td className="p-4">{h.subtitle}</td>
+                                            <td className="p-4">{h.tab}</td>
+                                            <td className="p-4 flex gap-3">
+                                                <span className="text-blue-500 cursor-pointer font-bold" onClick={() => openEditHeroModal(h)}>Edit</span>
+                                                <span className="text-red-500 cursor-pointer font-bold" onClick={() => handleDeleteHero(h.id)}>Delete</span>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
+
                 </div>
             </main>
 
@@ -614,6 +714,66 @@ const AdminDashboard = () => {
                     </div>
                 </div>
             )}
+                
+            {/* Vacancy Modal */}
+            {showVacancyModal && (
+                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-lg shadow-2xl max-w-xl w-full p-6">
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-2xl font-bold uppercase">{isEditingVacancy ? 'Edit Vacancy' : 'Add Vacancy'}</h3>
+                            <button onClick={() => {setShowVacancyModal(false); resetVacancyForm();}}><X /></button>
+                        </div>
+                        <form onSubmit={handleSaveVacancy} className="space-y-4">
+                            <input type="text" required placeholder="Title" value={newVacancy.title} onChange={e => setNewVacancy({...newVacancy, title: e.target.value})} className="w-full p-2 border" />
+                            <input type="text" required placeholder="Experience (e.g. 5+ Years)" value={newVacancy.exp} onChange={e => setNewVacancy({...newVacancy, exp: e.target.value})} className="w-full p-2 border" />
+                            <input type="text" required placeholder="Location" value={newVacancy.loc} onChange={e => setNewVacancy({...newVacancy, loc: e.target.value})} className="w-full p-2 border" />
+                            <textarea required placeholder="Description" value={newVacancy.desc} onChange={e => setNewVacancy({...newVacancy, desc: e.target.value})} className="w-full p-2 border" rows="3"></textarea>
+                            <button type="submit" className="w-full bg-primary text-white p-3 font-bold uppercase">Save</button>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Team Modal */}
+            {showTeamModal && (
+                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-lg shadow-2xl max-w-xl w-full p-6">
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-2xl font-bold uppercase">{isEditingTeam ? 'Edit Member' : 'Add Member'}</h3>
+                            <button onClick={() => {setShowTeamModal(false); resetTeamForm();}}><X /></button>
+                        </div>
+                        <form onSubmit={handleSaveTeam} className="space-y-4">
+                            <input type="text" required placeholder="Name" value={newTeam.name} onChange={e => setNewTeam({...newTeam, name: e.target.value})} className="w-full p-2 border" />
+                            <input type="text" required placeholder="Position" value={newTeam.position} onChange={e => setNewTeam({...newTeam, position: e.target.value})} className="w-full p-2 border" />
+                            <input type="text" required placeholder="Email" value={newTeam.email} onChange={e => setNewTeam({...newTeam, email: e.target.value})} className="w-full p-2 border" />
+                            <input type="text" required placeholder="Phone" value={newTeam.phone} onChange={e => setNewTeam({...newTeam, phone: e.target.value})} className="w-full p-2 border" />
+                            <input type="text" required placeholder="Image URL" value={newTeam.image} onChange={e => setNewTeam({...newTeam, image: e.target.value})} className="w-full p-2 border" />
+                            <textarea required placeholder="Bio" value={newTeam.bio} onChange={e => setNewTeam({...newTeam, bio: e.target.value})} className="w-full p-2 border" rows="3"></textarea>
+                            <button type="submit" className="w-full bg-primary text-white p-3 font-bold uppercase">Save</button>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Hero Modal */}
+            {showHeroModal && (
+                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-lg shadow-2xl max-w-xl w-full p-6">
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-2xl font-bold uppercase">{isEditingHero ? 'Edit Slide' : 'Add Slide'}</h3>
+                            <button onClick={() => {setShowHeroModal(false); resetHeroForm();}}><X /></button>
+                        </div>
+                        <form onSubmit={handleSaveHero} className="space-y-4">
+                            <input type="text" required placeholder="Title" value={newHero.title} onChange={e => setNewHero({...newHero, title: e.target.value})} className="w-full p-2 border" />
+                            <input type="text" required placeholder="Subtitle" value={newHero.subtitle} onChange={e => setNewHero({...newHero, subtitle: e.target.value})} className="w-full p-2 border" />
+                            <input type="text" required placeholder="Tab Name (e.g. Integrity)" value={newHero.tab} onChange={e => setNewHero({...newHero, tab: e.target.value})} className="w-full p-2 border" />
+                            <input type="text" required placeholder="Image URL" value={newHero.image} onChange={e => setNewHero({...newHero, image: e.target.value})} className="w-full p-2 border" />
+                            <button type="submit" className="w-full bg-primary text-white p-3 font-bold uppercase">Save</button>
+                        </form>
+                    </div>
+                </div>
+            )}
+
         </div>
     );
 };
