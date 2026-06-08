@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, Phone, Mail, Send } from 'lucide-react';
+import { supabase } from '../supabaseClient';
 
 const Contact = () => {
     const [formData, setFormData] = useState({
@@ -20,23 +21,13 @@ const Contact = () => {
         e.preventDefault();
         setStatus('sending');
         try {
-            const response = await fetch('http://localhost:5000/api/contact', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            });
-            const data = await response.json();
+            const { error } = await supabase.from('enquiries').insert([formData]);
 
-            if (data.success) {
-                setStatus('success');
-                setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
-                setTimeout(() => setStatus(''), 5000);
-            } else {
-                alert('Failed to send message: ' + data.message);
-                setStatus('');
-            }
+            if (error) throw error;
+
+            setStatus('success');
+            setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+            setTimeout(() => setStatus(''), 5000);
         } catch (error) {
             console.error('Error:', error);
             alert('Something went wrong. Please try again.');

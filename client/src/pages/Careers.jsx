@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Upload, Briefcase } from 'lucide-react';
+import { supabase } from '../supabaseClient';
 
 const Careers = () => {
     const [file, setFile] = useState(null);
@@ -14,33 +15,44 @@ const Careers = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const formData = new FormData();
         const name = e.target.querySelector('input[type="text"]').value;
         const email = e.target.querySelector('input[type="email"]').value;
 
-        formData.append('name', name);
-        formData.append('email', email);
-        if (file) {
-            formData.append('cv', file);
-        } else {
+        if (!file) {
             alert("Please upload a CV");
             return;
         }
 
         try {
-            const response = await fetch('http://localhost:5000/api/careers/apply', {
-                method: 'POST',
-                body: formData, // No Content-Type header needed for FormData
-            });
-            const data = await response.json();
+            // Upload file to Supabase Storage (bucket: 'resumes')
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+            const { data: uploadData, error: uploadError } = await supabase.storage
+                .from('resumes')
+                .upload(fileName, file);
 
-            if (data.success) {
-                alert('Application submitted successfully!');
-                e.target.reset();
-                setFile(null);
-            } else {
-                alert('Failed to submit application: ' + data.message);
-            }
+            if (uploadError) throw uploadError;
+
+            // Get public URL
+            const { data: publicUrlData } = supabase.storage.from('resumes').getPublicUrl(fileName);
+            const resume_url = publicUrlData.publicUrl;
+
+            // Insert into Database
+            const { error: dbError } = await supabase.from('applications').insert([{
+                name,
+                email,
+                phone: 'N/A', // Using N/A as it's not in the form
+                position: 'General Application', // General application
+                experience: 'N/A',
+                message: '',
+                resume_url
+            }]);
+
+            if (dbError) throw dbError;
+
+            alert('Application submitted successfully!');
+            e.target.reset();
+            setFile(null);
         } catch (error) {
             console.error('Error:', error);
             alert('Something went wrong. Please try again.');

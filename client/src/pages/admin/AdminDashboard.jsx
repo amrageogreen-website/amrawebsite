@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { LayoutDashboard, MessageSquare, Briefcase, FileText, LogOut, Plus, Search, X, TrendingUp, Users, Folder, Mail } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../../supabaseClient';
 
 const AdminDashboard = () => {
     const [activeTab, setActiveTab] = useState('dashboard');
@@ -30,21 +31,18 @@ const AdminDashboard = () => {
         // Fetch Data
         const fetchData = async () => {
             try {
-                const token = localStorage.getItem('adminToken');
-                const headers = { 'Authorization': `Bearer ${token}` };
-                
                 if (activeTab === 'enquiries') {
-                    const res = await fetch('http://localhost:5000/api/contact', { headers });
-                    const data = await res.json();
-                    if (data.success) setEnquiries(data.data);
+                    const { data, error } = await supabase.from('enquiries').select('*').order('created_at', { ascending: false });
+                    if (error) throw error;
+                    if (data) setEnquiries(data);
                 } else if (activeTab === 'applications') {
-                    const res = await fetch('http://localhost:5000/api/careers', { headers });
-                    const data = await res.json();
-                    if (data.success) setApplications(data.data);
+                    const { data, error } = await supabase.from('applications').select('*').order('created_at', { ascending: false });
+                    if (error) throw error;
+                    if (data) setApplications(data);
                 } else if (activeTab === 'projects') {
-                    const res = await fetch('http://localhost:5000/api/projects', { headers });
-                    const data = await res.json();
-                    if (data.success) setProjects(data.data);
+                    const { data, error } = await supabase.from('projects').select('*').order('created_at', { ascending: false });
+                    if (error) throw error;
+                    if (data) setProjects(data);
                 }
             } catch (error) {
                 console.error("Failed to fetch data", error);
@@ -56,33 +54,25 @@ const AdminDashboard = () => {
     const handleAddProject = async (e) => {
         e.preventDefault();
         try {
-            const token = localStorage.getItem('adminToken');
-            const res = await fetch('http://localhost:5000/api/projects', {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(newProject)
+            const { error } = await supabase.from('projects').insert([newProject]);
+            if (error) throw error;
+            
+            alert('Project added successfully!');
+            setShowProjectModal(false);
+            setNewProject({
+                title: '',
+                category: '',
+                location: '',
+                year: '',
+                status: 'ongoing',
+                client: '',
+                budget: '',
+                duration: '',
+                description: ''
             });
-            const data = await res.json();
-            if (data.success) {
-                alert('Project added successfully!');
-                setShowProjectModal(false);
-                setNewProject({
-                    title: '',
-                    category: '',
-                    location: '',
-                    year: '',
-                    status: 'ongoing',
-                    client: '',
-                    budget: '',
-                    duration: '',
-                    description: ''
-                });
-                // Refresh projects
-                setActiveTab('projects');
-            }
+            // Trigger refresh
+            setActiveTab('');
+            setTimeout(() => setActiveTab('projects'), 0);
         } catch (error) {
             console.error('Failed to add project', error);
             alert('Failed to add project');
@@ -259,8 +249,8 @@ const AdminDashboard = () => {
                                             <td className="p-4 font-medium text-slate-900">{item.name}</td>
                                             <td className="p-4 text-slate-600">{item.email}</td>
                                             <td className="p-4 text-slate-600">{item.subject}</td>
-                                            <td className="p-4 text-slate-500 text-sm">{item.date}</td>
-                                            <td className="p-4"><span className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full font-bold">New</span></td>
+                                            <td className="p-4 text-slate-500 text-sm">{item.created_at ? new Date(item.created_at).toLocaleDateString() : 'N/A'}</td>
+                                            <td className="p-4"><span className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full font-bold">{item.status || 'new'}</span></td>
                                         </tr>
                                     )) : (
                                         <tr><td colSpan="5" className="p-8 text-center text-slate-400">No enquiries found.</td></tr>
@@ -288,8 +278,8 @@ const AdminDashboard = () => {
                                             <td className="p-4 font-medium text-slate-900">{item.name}</td>
                                             <td className="p-4 text-slate-600">{item.email}</td>
                                             <td className="p-4 text-slate-600">{item.position}</td>
-                                            <td className="p-4 text-primary underline cursor-pointer">{item.cv}</td>
-                                            <td className="p-4 text-slate-500 text-sm">{item.date}</td>
+                                            <td className="p-4 text-primary underline cursor-pointer">{item.resume_url || 'N/A'}</td>
+                                            <td className="p-4 text-slate-500 text-sm">{item.created_at ? new Date(item.created_at).toLocaleDateString() : 'N/A'}</td>
                                         </tr>
                                     )) : (
                                         <tr><td colSpan="5" className="p-8 text-center text-slate-400">No applications received yet.</td></tr>

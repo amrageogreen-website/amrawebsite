@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Lock, ArrowRight } from 'lucide-react';
+import { supabase } from '../../supabaseClient';
 
 const AdminLogin = () => {
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
@@ -12,20 +13,20 @@ const AdminLogin = () => {
         e.preventDefault();
         setError('');
         try {
-            const res = await fetch('http://localhost:5000/api/auth/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password })
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email,
+                password,
             });
-            const data = await res.json();
-            if (data.success) {
-                localStorage.setItem('adminToken', data.token);
+
+            if (error) throw error;
+
+            if (data.session) {
+                // Supabase handles the token automatically, but we can set a flag or just rely on supabase.auth.getSession() in protected routes
+                localStorage.setItem('adminToken', data.session.access_token);
                 navigate('/admin/dashboard');
-            } else {
-                setError(data.message || 'Invalid Credentials');
             }
         } catch (err) {
-            setError('Failed to connect to server');
+            setError(err.message || 'Failed to connect to Supabase');
         }
     };
 
@@ -50,12 +51,12 @@ const AdminLogin = () => {
                 <form onSubmit={handleLogin} className="space-y-6">
                     {error && <div className="bg-red-100 text-red-600 p-3 rounded-sm mb-4 text-sm font-bold">{error}</div>}
                     <div className="text-left">
-                        <label className="block text-sm font-heading font-semibold text-slate-700 mb-2 uppercase tracking-wider">Username</label>
+                        <label className="block text-sm font-heading font-semibold text-slate-700 mb-2 uppercase tracking-wider">Email Address</label>
                         <input
-                            type="text"
-                            placeholder="Enter Username"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
+                            type="email"
+                            placeholder="Enter Admin Email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             className="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all font-body mb-4"
                         />
                     </div>

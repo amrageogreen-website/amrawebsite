@@ -1,35 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, Calendar, ArrowUpRight } from 'lucide-react';
+import { supabase } from '../supabaseClient';
 import projectsData from '../data/projectsData';
 
 const Projects = () => {
-    const [dbProjects, setDbProjects] = useState([]);
+    const [projects, setProjects] = useState([]);
     const [filter, setFilter] = useState('All');
     const [statusFilter, setStatusFilter] = useState('all');
+    const [loading, setLoading] = useState(true);
 
-    React.useEffect(() => {
+    useEffect(() => {
         const fetchProjects = async () => {
             try {
-                const res = await fetch('http://localhost:5000/api/projects');
-                const data = await res.json();
-                if (data.success) {
-                    // Combine static data and DB data for demonstration if needed, or just DB data.
-                    // For now, let's use the DB data. If it's empty, we should fallback or just show empty.
-                    // Actually, let's fetch DB data. 
-                    setDbProjects(data.data);
-                }
+                const { data, error } = await supabase.from('projects').select('*').order('year', { ascending: false });
+                if (error) throw error;
+                if (data) setProjects(data);
             } catch (err) {
                 console.error("Failed to fetch projects", err);
+            } finally {
+                setLoading(false);
             }
         };
         fetchProjects();
     }, []);
 
     // Filter by category and status
-    // Let's combine the imported static projectsData with the dbProjects
-    let filteredProjects = [...projectsData, ...dbProjects];
+    // Combine the imported static projectsData with the db projects
+    let filteredProjects = [...projectsData, ...projects];
 
     if (filter !== 'All') {
         filteredProjects = filteredProjects.filter(p => p.category === filter);
@@ -40,7 +39,7 @@ const Projects = () => {
     }
 
     // Dynamically calculate categories
-    const categories = ['All', ...new Set([...projectsData, ...dbProjects].map(p => p.category))];
+    const categories = ['All', ...new Set([...projectsData, ...projects].map(p => p.category))];
 
     return (
         <div className="pt-20">
@@ -132,7 +131,7 @@ const Projects = () => {
                                     >
                                         <div className="h-64 relative overflow-hidden">
                                             <img
-                                                src={project.image}
+                                                src={project.image || project.image_url || 'https://images.unsplash.com/photo-1541888086225-b6d30fbf02fc?auto=format&fit=crop&q=80'}
                                                 alt={project.title}
                                                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                                             />
