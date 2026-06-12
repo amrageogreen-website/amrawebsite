@@ -45,8 +45,8 @@ const Footer = () => {
                 <div>
                     <h4 className="text-white text-lg font-bold mb-6">Contact Us</h4>
                     <div className="space-y-4 text-slate-400">
-                        <p className="flex items-start gap-3"><MapPin size={18} className="mt-1 flex-shrink-0" /> <span>1st Floor, DCG4-0103, DLF Corporate Greens, Gurugram, Haryana, 122004</span></p>
-                        <p className="flex items-center gap-3"><Phone size={18} /> +91-8607380005</p>
+                        <p className="flex items-start gap-3"><MapPin size={18} className="mt-1 flex-shrink-0" /> <span>UNIT No 1401-1403, Tower-1, DLF Corporate Greens, Sector 74A, Gurugram, Haryana 122004</span></p>
+                        <p className="flex items-center gap-3"><Phone size={18} /> 0124-5181169</p>
                         <p className="flex items-center gap-3"><Mail size={18} /> amrageogreen@gmail.com</p>
                     </div>
                 </div>

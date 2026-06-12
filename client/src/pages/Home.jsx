@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ArrowRight, CheckCircle, Award, Users, HardHat, ChevronRight, Truck, Mountain, LayoutGrid, Hammer, Layers, Droplet, Quote } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../supabaseClient';
+import SEO from '../components/SEO';
 
 const Home = () => {
     const [currentSlide, setCurrentSlide] = useState(0);
@@ -29,6 +30,11 @@ const Home = () => {
 
     return (
         <div className="font-body text-slate-800">
+            <SEO 
+                title="Home" 
+                description="AMRA Geogreen Works Pvt Ltd specializes in geotechnical engineering, highway construction, slope protection, and sustainable infrastructure solutions."
+                url="https://www.amrageogreen.com"
+            />
             {/* Hero Slider Section */}
             <section className="relative h-screen min-h-[700px] bg-secondary overflow-hidden">
                 <AnimatePresence mode='wait'>

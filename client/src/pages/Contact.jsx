@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, Phone, Mail, Send } from 'lucide-react';
 import { supabase } from '../supabaseClient';
+import SEO from '../components/SEO';
 
 const Contact = () => {
     const [formData, setFormData] = useState({
@@ -37,6 +38,11 @@ const Contact = () => {
 
     return (
         <div className="pt-20 bg-slate-50 min-h-screen">
+            <SEO 
+                title="Contact Us" 
+                description="Get in touch with AMRA Geogreen Works Pvt Ltd for project inquiries, technical collaboration, or partnership opportunities."
+                url="https://www.amrageogreen.com/contact"
+            />
             {/* Map Section on Top */}
             <section className="h-[500px] w-full bg-slate-200 relative z-0">
                 <iframe
@@ -80,7 +86,7 @@ const Contact = () => {
                                         </div>
                                         <div>
                                             <h4 className="text-xs uppercase tracking-widest text-slate-400 font-bold mb-2">Corporate Office</h4>
-                                            <p className="text-white text-sm leading-relaxed mb-4">1st Floor, Office No DCG4-0103,<br />DLF Corporate Greens, Tower 4, Sector 74A,<br />Gurugram, Haryana, 122004</p>
+                                            <p className="text-white text-sm leading-relaxed mb-4">UNIT No 1401-1403, Tower-1,<br />DLF Corporate Greens, Sector 74A,<br />Gurugram, Haryana 122004</p>
                                             
                                             <h4 className="text-xs uppercase tracking-widest text-slate-400 font-bold mb-2">Registered Office</h4>
                                             <p className="text-white text-sm leading-relaxed">BU-5 SFS Flats, Outer Ring Road,<br />Pitampura Delhi, Delhi – 110034</p>
@@ -93,7 +99,7 @@ const Contact = () => {
                                         </div>
                                         <div>
                                             <h4 className="text-xs uppercase tracking-widest text-slate-400 font-bold mb-2">Direct Line</h4>
-                                            <p className="text-white text-base">+91-8607380005</p>
+                                            <p className="text-white text-base">0124-5181169</p>
                                         </div>
                                     </div>
 

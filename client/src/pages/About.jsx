@@ -1,10 +1,16 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import EquipmentSection from '../components/EquipmentSection';
+import SEO from '../components/SEO';
 
 const About = () => {
     return (
         <div className="pt-20">
+            <SEO 
+                title="About Us" 
+                description="Learn about AMRA Geogreen Works Pvt Ltd, our mission, vision, and core values. We are pioneering sustainable infrastructure since 2010."
+                url="https://www.amrageogreen.com/about"
+            />
             {/* Header */}
             <section className="bg-slate-50 py-20">
                 <div className="container text-center">

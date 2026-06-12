@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Truck, Mountain, Layers, LayoutGrid, Hammer, Droplet } from 'lucide-react';
+import SEO from '../components/SEO';
 
 const Services = () => {
     const services = [
@@ -50,6 +51,11 @@ const Services = () => {
 
     return (
         <div className="pt-20">
+            <SEO 
+                title="Our Services" 
+                description="Explore our core engineering services including Highway Construction, Hill Slope Protection, Retaining Walls, Gabion Works, and Soil Nailing."
+                url="https://www.amrageogreen.com/services"
+            />
             <section className="bg-slate-50 py-20">
                 <div className="container text-center">
                     <motion.div

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, Calendar, ArrowUpRight } from 'lucide-react';
 import { supabase } from '../supabaseClient';
+import SEO from '../components/SEO';
 
 const Projects = () => {
     const [projects, setProjects] = useState([]);
@@ -41,6 +42,11 @@ const Projects = () => {
 
     return (
         <div className="pt-20">
+            <SEO 
+                title="Our Projects" 
+                description="Explore the portfolio of AMRA Geogreen Works Pvt Ltd. View our completed and ongoing infrastructure projects across India."
+                url="https://www.amrageogreen.com/projects"
+            />
             {/* Hero Section */}
             <section className="bg-secondary py-20 relative overflow-hidden">
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-5"></div>

@@ -1,10 +1,16 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Leaf, Shield, Heart, Recycle } from 'lucide-react';
+import SEO from '../components/SEO';
 
 const Sustainability = () => {
     return (
         <div className="pt-20">
+            <SEO 
+                title="Sustainability & Safety" 
+                description="Learn about our commitment to eco-friendly construction, zero harm safety policies, and green engineering."
+                url="https://www.amrageogreen.com/sustainability"
+            />
             <section className="bg-slate-50 py-20">
                 <div className="container text-center">
                     <motion.div

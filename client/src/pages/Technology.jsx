@@ -1,9 +1,15 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import SEO from '../components/SEO';
 
 const Technology = () => {
     return (
         <div className="pt-20">
+            <SEO 
+                title="Technology & Equipment" 
+                description="Discover the state-of-the-art machinery and advanced construction methodologies used by AMRA Geogreen Works Pvt Ltd."
+                url="https://www.amrageogreen.com/technology"
+            />
             <section className="bg-slate-50 py-20">
                 <div className="container text-center">
                     <motion.div

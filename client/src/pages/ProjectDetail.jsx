@@ -3,6 +3,7 @@ import { useParams, Link, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, MapPin, Calendar, DollarSign, Users, CheckCircle, AlertTriangle, Lightbulb, X, Loader } from 'lucide-react';
 import { supabase } from '../supabaseClient';
+import SEO from '../components/SEO';
 
 const ProjectDetail = () => {
     const { slug } = useParams();
@@ -72,6 +73,13 @@ const ProjectDetail = () => {
 
     return (
         <div className="pt-20">
+            <SEO 
+                title={project.title} 
+                description={project.description ? project.description.substring(0, 160) : "Project detail page"}
+                url={`https://www.amrageogreen.com/projects/${project.slug}`}
+                image={project.image_url}
+                type="article"
+            />
             {/* Hero Section */}
             <section className="relative h-[60vh] min-h-[500px] overflow-hidden">
                 <img

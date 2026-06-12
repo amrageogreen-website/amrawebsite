@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Linkedin, Mail, Phone } from 'lucide-react';
 import { supabase } from '../supabaseClient';
+import SEO from '../components/SEO';
 
 const Team = () => {
     const [teamMembers, setTeamMembers] = useState([]);
@@ -18,6 +19,11 @@ const Team = () => {
 
     return (
         <div className="pt-20">
+            <SEO 
+                title="Our Team" 
+                description="Meet the experts behind AMRA Geogreen Works Pvt Ltd. Dedicated professionals committed to building India's infrastructure."
+                url="https://www.amrageogreen.com/team"
+            />
             {/* Header */}
             <section className="bg-secondary py-20 relative overflow-hidden">
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-5"></div>

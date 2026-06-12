@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Upload, Briefcase } from 'lucide-react';
 import { supabase } from '../supabaseClient';
+import SEO from '../components/SEO';
 
 const Careers = () => {
     const [file, setFile] = useState(null);
@@ -72,6 +73,11 @@ const Careers = () => {
 
     return (
         <div className="pt-20">
+            <SEO 
+                title="Careers" 
+                description="Join the AMRA Geogreen Works Pvt Ltd team. Build a career with leaders in infrastructure engineering."
+                url="https://www.amrageogreen.com/careers"
+            />
             <section className="bg-slate-50 py-20">
                 <div className="container text-center">
                     <motion.div
