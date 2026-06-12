@@ -1,8 +1,19 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, Phone, MapPin, Linkedin, Facebook, Twitter } from 'lucide-react';
+import { supabase } from '../../supabaseClient';
 
 const Footer = () => {
+    const [socials, setSocials] = useState({ facebook_url: '#', twitter_url: '#', linkedin_url: '#' });
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            const { data } = await supabase.from('site_settings').select('facebook_url, twitter_url, linkedin_url').single();
+            if (data) setSocials(data);
+        };
+        fetchSettings();
+    }, []);
+
     return (
         <footer className="bg-slate-900 text-slate-100 pt-20">
             <div className="container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 pb-16">
@@ -11,9 +22,9 @@ const Footer = () => {
                     <img src="/logo.png" alt="AMRA Geogreen" className="h-14 w-auto bg-white p-2 rounded-sm" />
                     <p className="text-slate-400 leading-relaxed">Building specialized infrastructure for a sustainable future. Excellence in every layer.</p>
                     <div className="flex gap-4">
-                        <a href="#" className="text-slate-400 hover:text-primary-light transition-colors"><Linkedin size={20} /></a>
-                        <a href="#" className="text-slate-400 hover:text-primary-light transition-colors"><Facebook size={20} /></a>
-                        <a href="#" className="text-slate-400 hover:text-primary-light transition-colors"><Twitter size={20} /></a>
+                        <a href={socials.linkedin_url || '#'} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-primary-light transition-colors"><Linkedin size={20} /></a>
+                        <a href={socials.facebook_url || '#'} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-primary-light transition-colors"><Facebook size={20} /></a>
+                        <a href={socials.twitter_url || '#'} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-primary-light transition-colors"><Twitter size={20} /></a>
                     </div>
                 </div>
 

@@ -1,16 +1,21 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FileText, Download, Layout, ShieldCheck, Mail, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
-const downloads = [
-    { title: 'Company Profile', icon: FileText, link: '/AMRA-Profile.pdf' },
-    { title: 'Corporate Brochure', icon: Layout, link: '#' },
-    { title: 'Presentation', icon: Layout, link: '#' },
-    { title: 'Certifications', icon: ShieldCheck, link: '#' },
-];
+import { supabase } from '../../supabaseClient';
 
 const DownloadCenterCTA = () => {
+    const [profileUrl, setProfileUrl] = useState('#');
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            const { data } = await supabase.from('site_settings').select('company_profile_url').single();
+            if (data && data.company_profile_url) {
+                setProfileUrl(data.company_profile_url);
+            }
+        };
+        fetchSettings();
+    }, []);
     return (
         <>
             {/* Download Center */}
@@ -21,31 +26,24 @@ const DownloadCenterCTA = () => {
                         <div className="w-24 h-1 bg-primary mx-auto"></div>
                     </div>
 
-                    <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-6">
-                        {downloads.map((item, idx) => {
-                            const Icon = item.icon;
-                            return (
-                                <motion.a 
-                                    key={idx}
-                                    href={item.link}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    initial={{ opacity: 0, y: 20 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true }}
-                                    transition={{ delay: idx * 0.1 }}
-                                    className="bg-white p-6 rounded-xl shadow-md text-center hover:shadow-xl hover:-translate-y-2 transition-all group border border-slate-200"
-                                >
-                                    <div className="w-16 h-16 mx-auto bg-slate-50 rounded-full flex items-center justify-center text-slate-400 group-hover:text-primary group-hover:bg-primary/10 transition-colors mb-4">
-                                        <Icon size={32} />
-                                    </div>
-                                    <h4 className="font-bold text-slate-800 mb-4">{item.title}</h4>
-                                    <span className="inline-flex items-center gap-2 text-sm font-bold text-primary">
-                                        <Download size={16} /> Download
-                                    </span>
-                                </motion.a>
-                            )
-                        })}
+                    <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-6 justify-center">
+                        <motion.a 
+                            href={profileUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            className="bg-white p-6 rounded-xl shadow-md text-center hover:shadow-xl hover:-translate-y-2 transition-all group border border-slate-200 md:col-start-2 md:col-span-2"
+                        >
+                            <div className="w-16 h-16 mx-auto bg-slate-50 rounded-full flex items-center justify-center text-slate-400 group-hover:text-primary group-hover:bg-primary/10 transition-colors mb-4">
+                                <FileText size={32} />
+                            </div>
+                            <h4 className="font-bold text-slate-800 mb-4">Company Profile</h4>
+                            <span className="inline-flex items-center gap-2 text-sm font-bold text-primary">
+                                <Download size={16} /> Download
+                            </span>
+                        </motion.a>
                     </div>
                 </div>
             </section>

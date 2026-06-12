@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LayoutDashboard, MessageSquare, Briefcase, FileText, LogOut, Plus, Search, X, TrendingUp, Users, Folder, Mail } from 'lucide-react';
+import { LayoutDashboard, MessageSquare, Briefcase, FileText, LogOut, Plus, Search, X, TrendingUp, Users, Folder, Mail, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../supabaseClient';
 
@@ -11,6 +11,7 @@ const AdminDashboard = () => {
     const [vacancies, setVacancies] = useState([]);
     const [teamMembers, setTeamMembers] = useState([]);
     const [heroSlides, setHeroSlides] = useState([]);
+    const [siteSettings, setSiteSettings] = useState({ company_profile_url: '', facebook_url: '', twitter_url: '', linkedin_url: '' });
     
     // Project Form State
     const [showProjectModal, setShowProjectModal] = useState(false);
@@ -89,6 +90,10 @@ const AdminDashboard = () => {
                     const { data, error } = await supabase.from('hero_slides').select('*').order('created_at', { ascending: false });
                     if (error) throw error;
                     if (data) setHeroSlides(data);
+                } else if (activeTab === 'settings') {
+                    const { data, error } = await supabase.from('site_settings').select('*').single();
+                    if (error && error.code !== 'PGRST116') throw error;
+                    if (data) setSiteSettings(data);
                 }
             } catch (error) {
                 console.error("Failed to fetch data", error);
@@ -265,6 +270,36 @@ const AdminDashboard = () => {
         setHeroSlides(heroSlides.filter(h => h.id !== id));
     };
 
+    // Settings Handlers
+    const handleSaveSettings = async (e) => {
+        e.preventDefault();
+        try {
+            const { error } = await supabase.from('site_settings').upsert([{ id: 1, ...siteSettings }]);
+            if (error) throw error;
+            alert('Settings saved successfully!');
+        } catch(e) { alert('Failed to save settings: ' + e.message); }
+    };
+
+    const handleProfileUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const fileExt = file.name.split('.').pop();
+        const fileName = `company-profile-${Date.now()}.${fileExt}`;
+        
+        try {
+            const { error: uploadError } = await supabase.storage.from('documents').upload(fileName, file);
+            if (uploadError) throw uploadError;
+
+            const { data } = supabase.storage.from('documents').getPublicUrl(fileName);
+            setSiteSettings(prev => ({ ...prev, company_profile_url: data.publicUrl }));
+            alert('File uploaded successfully! Click "Save Settings" to confirm.');
+        } catch (error) {
+            console.error('Error uploading file:', error.message);
+            alert('Error uploading file! ' + error.message);
+        }
+    };
+
     // Stats
     const stats = {
         totalEnquiries: enquiries.length,
@@ -325,6 +360,12 @@ const AdminDashboard = () => {
                     >
                         <LayoutDashboard size={18} /> Hero Slides
                     </button>
+                    <button
+                        className={`w-full flex items-center gap-3 px-6 py-3 text-sm font-medium transition-all border-r-4 ${activeTab === 'settings' ? 'bg-slate-800 text-white border-primary' : 'text-slate-400 border-transparent hover:bg-slate-800 hover:text-white'}`}
+                        onClick={() => setActiveTab('settings')}
+                    >
+                        <Settings size={18} /> Site Settings
+                    </button>
                 </nav>
 
                 <div className="p-6 border-t border-slate-800">
@@ -346,6 +387,7 @@ const AdminDashboard = () => {
                             {activeTab === 'vacancies' && 'Job Vacancies'}
                             {activeTab === 'team' && 'Team Management'}
                             {activeTab === 'hero' && 'Hero Slides Settings'}
+                            {activeTab === 'settings' && 'Site Settings'}
                         </h2>
                         <p className="text-slate-500 text-sm mt-1">Manage your website content and user interactions.</p>
                     </div>
@@ -638,6 +680,49 @@ const AdminDashboard = () => {
                                     ))}
                                 </tbody>
                             </table>
+                        </div>
+                    )}
+
+                    {activeTab === 'settings' && (
+                        <div className="p-6">
+                            <form onSubmit={handleSaveSettings} className="max-w-2xl bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                                <h3 className="text-xl font-bold uppercase mb-6 text-slate-800">Global Settings</h3>
+                                
+                                <div className="mb-6 border p-4 rounded-md bg-slate-50">
+                                    <label className="block text-sm font-bold text-slate-700 uppercase mb-2">Company Profile PDF</label>
+                                    <div className="flex items-center gap-4 mb-2">
+                                        <input type="file" accept=".pdf" onChange={handleProfileUpload} className="text-sm" />
+                                    </div>
+                                    <input 
+                                        type="text" 
+                                        placeholder="Or Paste PDF URL directly" 
+                                        value={siteSettings.company_profile_url || ''} 
+                                        onChange={e => setSiteSettings({...siteSettings, company_profile_url: e.target.value})} 
+                                        className="w-full p-2 border border-slate-300 rounded text-sm" 
+                                    />
+                                    {siteSettings.company_profile_url && (
+                                        <a href={siteSettings.company_profile_url} target="_blank" rel="noreferrer" className="text-primary text-sm font-bold mt-2 inline-block">View Current Profile</a>
+                                    )}
+                                </div>
+
+                                <div className="space-y-4 mb-6">
+                                    <h4 className="text-sm font-bold text-slate-500 uppercase border-b pb-2">Social Media Links</h4>
+                                    <div>
+                                        <label className="block text-xs font-bold text-slate-600 mb-1">Facebook URL</label>
+                                        <input type="text" value={siteSettings.facebook_url || ''} onChange={e => setSiteSettings({...siteSettings, facebook_url: e.target.value})} className="w-full p-2 border border-slate-300 rounded" placeholder="https://facebook.com/..." />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-slate-600 mb-1">Twitter (X) URL</label>
+                                        <input type="text" value={siteSettings.twitter_url || ''} onChange={e => setSiteSettings({...siteSettings, twitter_url: e.target.value})} className="w-full p-2 border border-slate-300 rounded" placeholder="https://twitter.com/..." />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-slate-600 mb-1">LinkedIn URL</label>
+                                        <input type="text" value={siteSettings.linkedin_url || ''} onChange={e => setSiteSettings({...siteSettings, linkedin_url: e.target.value})} className="w-full p-2 border border-slate-300 rounded" placeholder="https://linkedin.com/..." />
+                                    </div>
+                                </div>
+
+                                <button type="submit" className="w-full bg-primary text-white p-3 font-bold uppercase tracking-wider rounded hover:bg-primary-dark transition-all">Save Settings</button>
+                            </form>
                         </div>
                     )}
 
