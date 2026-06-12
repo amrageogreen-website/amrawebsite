@@ -55,7 +55,7 @@ const Home = () => {
                     </motion.div>
                 </AnimatePresence>
 
-                <div className="container relative z-20 h-full flex flex-col justify-center">
+                <div className="container relative z-20 h-full flex flex-col justify-end md:justify-center pb-20 md:pb-0">
                     <div className="max-w-4xl pt-20">
                         <motion.div
                             key={currentSlide + "-text"}
