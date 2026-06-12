@@ -5,7 +5,7 @@ const leaders = [
     {
         name: 'Mr. Amit Kundu',
         designation: 'Managing Director',
-        image: '/images/team/amit_kundu.png',
+        image: '/images/about/director.png',
         bio: 'With extensive experience in infrastructure, environmental engineering, and project management, Mr. Amit Kundu has successfully led AMRA Geogreen to become a trusted name in the industry.'
     },
     {
