@@ -33,7 +33,7 @@ const Home = () => {
             <SEO 
                 title="Home" 
                 description="AMRA Geogreen Works Pvt Ltd specializes in geotechnical engineering, highway construction, slope protection, and sustainable infrastructure solutions."
-                url="https://www.amrageogreen.com"
+                url="https://www.amrageogreenworks.com"
             />
             {/* Hero Slider Section */}
             <section className="relative h-screen min-h-[700px] bg-secondary overflow-hidden">

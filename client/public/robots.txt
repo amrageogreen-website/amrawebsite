@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.amrageogreen.com/sitemap.xml
+Sitemap: https://www.amrageogreenworks.com/sitemap.xml

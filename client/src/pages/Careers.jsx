@@ -76,7 +76,7 @@ const Careers = () => {
             <SEO 
                 title="Careers" 
                 description="Join the AMRA Geogreen Works Pvt Ltd team. Build a career with leaders in infrastructure engineering."
-                url="https://www.amrageogreen.com/careers"
+                url="https://www.amrageogreenworks.com/careers"
             />
             <section className="bg-slate-50 py-20">
                 <div className="container text-center">

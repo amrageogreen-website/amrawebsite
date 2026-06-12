@@ -22,7 +22,7 @@ const Team = () => {
             <SEO 
                 title="Our Team" 
                 description="Meet the experts behind AMRA Geogreen Works Pvt Ltd. Dedicated professionals committed to building India's infrastructure."
-                url="https://www.amrageogreen.com/team"
+                url="https://www.amrageogreenworks.com/team"
             />
             {/* Header */}
             <section className="bg-secondary py-20 relative overflow-hidden">

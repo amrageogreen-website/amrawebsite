@@ -45,7 +45,7 @@ const Projects = () => {
             <SEO 
                 title="Our Projects" 
                 description="Explore the portfolio of AMRA Geogreen Works Pvt Ltd. View our completed and ongoing infrastructure projects across India."
-                url="https://www.amrageogreen.com/projects"
+                url="https://www.amrageogreenworks.com/projects"
             />
             {/* Hero Section */}
             <section className="bg-secondary py-20 relative overflow-hidden">

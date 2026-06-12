@@ -9,7 +9,7 @@ const Sustainability = () => {
             <SEO 
                 title="Sustainability & Safety" 
                 description="Learn about our commitment to eco-friendly construction, zero harm safety policies, and green engineering."
-                url="https://www.amrageogreen.com/sustainability"
+                url="https://www.amrageogreenworks.com/sustainability"
             />
             <section className="bg-slate-50 py-20">
                 <div className="container text-center">

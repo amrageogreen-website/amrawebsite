@@ -5,7 +5,7 @@ const SEO = ({
   title, 
   description, 
   keywords, 
-  url = "https://www.amrageogreen.com", 
+  url = "https://www.amrageogreenworks.com", 
   image = "/logo.png",
   type = "website"
 }) => {

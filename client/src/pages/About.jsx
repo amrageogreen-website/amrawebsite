@@ -9,7 +9,7 @@ const About = () => {
             <SEO 
                 title="About Us" 
                 description="Learn about AMRA Geogreen Works Pvt Ltd, our mission, vision, and core values. We are pioneering sustainable infrastructure since 2010."
-                url="https://www.amrageogreen.com/about"
+                url="https://www.amrageogreenworks.com/about"
             />
             {/* Header */}
             <section className="bg-slate-50 py-20">

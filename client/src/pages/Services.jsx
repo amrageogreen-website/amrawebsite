@@ -54,7 +54,7 @@ const Services = () => {
             <SEO 
                 title="Our Services" 
                 description="Explore our core engineering services including Highway Construction, Hill Slope Protection, Retaining Walls, Gabion Works, and Soil Nailing."
-                url="https://www.amrageogreen.com/services"
+                url="https://www.amrageogreenworks.com/services"
             />
             <section className="bg-slate-50 py-20">
                 <div className="container text-center">

@@ -41,7 +41,7 @@ const Contact = () => {
             <SEO 
                 title="Contact Us" 
                 description="Get in touch with AMRA Geogreen Works Pvt Ltd for project inquiries, technical collaboration, or partnership opportunities."
-                url="https://www.amrageogreen.com/contact"
+                url="https://www.amrageogreenworks.com/contact"
             />
             {/* Map Section on Top */}
             <section className="h-[500px] w-full bg-slate-200 relative z-0">

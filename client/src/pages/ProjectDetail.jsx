@@ -76,7 +76,7 @@ const ProjectDetail = () => {
             <SEO 
                 title={project.title} 
                 description={project.description ? project.description.substring(0, 160) : "Project detail page"}
-                url={`https://www.amrageogreen.com/projects/${project.slug}`}
+                url={`https://www.amrageogreenworks.com/projects/${project.slug}`}
                 image={project.image_url}
                 type="article"
             />
