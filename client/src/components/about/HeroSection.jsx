@@ -1,9 +1,22 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Download, Phone } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { supabase } from '../../supabaseClient';
 
 const HeroSection = () => {
+    const [profileUrl, setProfileUrl] = useState('#');
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            const { data } = await supabase.from('site_settings').select('company_profile_url').single();
+            if (data && data.company_profile_url) {
+                setProfileUrl(data.company_profile_url);
+            }
+        };
+        fetchSettings();
+    }, []);
+
     return (
         <section className="relative h-[80vh] flex items-center justify-center overflow-hidden">
             {/* Background Image */}
@@ -36,7 +49,7 @@ const HeroSection = () => {
                             <Phone size={20} />
                             Contact Us
                         </Link>
-                        <a href="/AMRA-Profile.pdf" target="_blank" className="btn bg-white hover:bg-slate-100 text-secondary px-8 py-4 rounded-sm font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-lg hover:-translate-y-1">
+                        <a href={profileUrl} target="_blank" rel="noreferrer" className="btn bg-white hover:bg-slate-100 text-secondary px-8 py-4 rounded-sm font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-lg hover:-translate-y-1">
                             <Download size={20} />
                             Company Profile
                         </a>
