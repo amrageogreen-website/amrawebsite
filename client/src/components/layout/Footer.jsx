@@ -16,12 +16,12 @@ const Footer = () => {
 
     return (
         <footer className="bg-slate-900 text-slate-100 pt-20">
-            <div className="container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 pb-16">
+            <div className="container grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 pb-16 text-center sm:text-left">
                 {/* Brand Column */}
-                <div className="space-y-6">
+                <div className="space-y-6 flex flex-col items-center sm:items-start">
                     <img src="/logo.png" alt="AMRA Geogreen" className="h-14 w-auto bg-white p-2 rounded-sm" />
-                    <p className="text-slate-400 leading-relaxed">Building specialized infrastructure for a sustainable future. Excellence in every layer.</p>
-                    <div className="flex gap-4">
+                    <p className="text-slate-400 leading-relaxed max-w-sm">Building specialized infrastructure for a sustainable future. Excellence in every layer.</p>
+                    <div className="flex gap-4 justify-center sm:justify-start">
                         <a href={socials.linkedin_url || '#'} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-primary-light transition-colors"><Linkedin size={20} /></a>
                         <a href={socials.facebook_url || '#'} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-primary-light transition-colors"><Facebook size={20} /></a>
                         <a href={socials.twitter_url || '#'} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-primary-light transition-colors"><Twitter size={20} /></a>
@@ -53,10 +53,10 @@ const Footer = () => {
                 </div>
 
                 {/* Contact Column */}
-                <div>
+                <div className="flex flex-col items-center sm:items-start">
                     <h4 className="text-white text-lg font-bold mb-6">Contact Us</h4>
-                    <div className="space-y-4 text-slate-400">
-                        <p className="flex items-start gap-3"><MapPin size={18} className="mt-1 flex-shrink-0" /> <span>UNIT No 1401-1403, Tower-1, DLF Corporate Greens, Sector 74A, Gurugram, Haryana 122004</span></p>
+                    <div className="space-y-4 text-slate-400 flex flex-col items-center sm:items-start">
+                        <p className="flex flex-col sm:flex-row items-center sm:items-start gap-3"><MapPin size={18} className="sm:mt-1 flex-shrink-0" /> <span>UNIT No 1401-1403, Tower-1, DLF Corporate Greens, Sector 74A, Gurugram, Haryana 122004</span></p>
                         <p className="flex items-center gap-3"><Phone size={18} /> 0124-5181169</p>
                         <p className="flex items-center gap-3"><Mail size={18} /> amrageogreen@gmail.com</p>
                     </div>
