@@ -56,7 +56,16 @@ const AdminDashboard = () => {
         // Fetch Data
         const fetchData = async () => {
             try {
-                if (activeTab === 'enquiries') {
+                if (activeTab === 'dashboard') {
+                    const [{ data: eData }, { data: aData }, { data: pData }] = await Promise.all([
+                        supabase.from('enquiries').select('*'),
+                        supabase.from('applications').select('*'),
+                        supabase.from('projects').select('*')
+                    ]);
+                    if (eData) setEnquiries(eData);
+                    if (aData) setApplications(aData);
+                    if (pData) setProjects(pData);
+                } else if (activeTab === 'enquiries') {
                     const { data, error } = await supabase.from('enquiries').select('*').order('created_at', { ascending: false });
                     if (error) throw error;
                     if (data) setEnquiries(data);
