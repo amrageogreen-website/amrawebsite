@@ -3,22 +3,16 @@ import { motion } from 'framer-motion';
 
 const leaders = [
     {
-        name: 'Mr. Arvind Sharma',
+        name: 'Mr. Amit Kundu',
         designation: 'Managing Director',
-        image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=600&auto=format&fit=crop',
-        bio: '20+ years of experience in infrastructure, environmental engineering, project management, and business development. He has successfully led AMRA Geogreen to become a trusted name in the industry.'
+        image: '/images/team/amit_kundu.png',
+        bio: 'With extensive experience in infrastructure, environmental engineering, and project management, Mr. Amit Kundu has successfully led AMRA Geogreen to become a trusted name in the industry.'
     },
     {
-        name: 'Mr. Rajesh Kumar',
+        name: 'Mrs. Deepika Kundu',
         designation: 'Director',
-        image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=600&auto=format&fit=crop',
-        bio: 'A visionary leader with a strong technical background in geotechnical engineering. Instrumental in expanding operations across multiple states and securing key government projects.'
-    },
-    {
-        name: 'Mr. Sanjay Singh',
-        designation: 'Founder',
-        image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=600&auto=format&fit=crop',
-        bio: 'The driving force behind the inception of AMRA Geogreen Works. His unwavering commitment to quality and sustainability laid the foundation for the company’s core values.'
+        image: '/images/team/deepika_kundu.png',
+        bio: 'A visionary leader instrumental in expanding operations and securing key projects. Her unwavering commitment to quality and sustainability drives the company forward.'
     }
 ];
 
@@ -31,7 +25,7 @@ const LeadershipTeam = () => {
                     <div className="w-24 h-1 bg-primary mx-auto"></div>
                 </div>
 
-                <div className="grid md:grid-cols-3 gap-8">
+                <div className="grid sm:grid-cols-2 gap-8 max-w-4xl mx-auto">
                     {leaders.map((leader, index) => (
                         <motion.div 
                             key={index}
