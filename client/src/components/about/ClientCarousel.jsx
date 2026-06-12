@@ -10,6 +10,7 @@ const clients = [
 ];
 
 const ClientCarousel = () => {
+    return null; // Temporarily hidden per request
     return (
         <section className="py-16 bg-white border-y border-slate-100 overflow-hidden">
             <div className="container mb-8 text-center">
