@@ -73,8 +73,8 @@ const CertificationsHSE = () => {
                         </div>
                         <div className="relative h-64 md:h-full min-h-[300px] rounded-xl overflow-hidden shadow-lg">
                             <img 
-                                src="/images/real/photo-5.jpg" 
-                                alt="Safety First" 
+                                src="/images/about/hse_photo.png" 
+                                alt="Safety First - HSE" 
                                 className="absolute inset-0 w-full h-full object-cover"
                             />
                         </div>
